@@ -72,8 +72,8 @@ function resetGame() {
 }
 
 function update() {
-  if (gameOver) {
-    obstacle.speed = 4;
+  if (gameOver){
+    resetGame();
     return;}
 
   // Gravitație
