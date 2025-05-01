@@ -15,26 +15,28 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const GROUND_Y = 100;
+const GROUND_Y = 110; // aliniere bună vizual
 
 // PCB (player)
 let pcb = {
   x: 50,
-  y: 100,
-  width: 90,
-  height: 90,
-  velocityY: 1,
-  gravity: 1.2  ,
+  y: GROUND_Y,
+  width: 70,
+  height: 70,
+  velocityY: 0,
+  gravity: 0.8,   // 🟢 gravitație mai mică => zboară mai mult
   isJumping: false
 };
+
 
 // Obstacle
 let obstacle = {
   x: 800,
-  y: 120,
-  width: 70,
-  height: 70,
-  speed: 8
+  y: GROUND_Y + 20,  // puțin mai jos decât GROUND_Y vizual
+  width: 50,
+  height: 50,
+  height: 50,
+  speed: 2
 };
 
 let score = 0;
@@ -51,17 +53,17 @@ blockImg.src = 'block_rezistor.png';
 const bgImg = new Image();
 bgImg.src = 'background.png';
 
-// Control săritură
+// Săritură
 document.addEventListener('keydown', (e) => {
-  if(pcb.isJumping == false) {
-    pcb.velocityY = -20;  // Săritură mai lungă
+  if (!pcb.isJumping && !gameOver) {
+    pcb.velocityY = -16; // ajustat pentru greutate mai realistă
     pcb.isJumping = true;
   }
 });
 
 function resetGame() {
   obstacle.x = 800;
-  obstacle.speed = 6;
+  obstacle.speed = 5;
   score = 0;
   gameOver = false;
   pcb.y = GROUND_Y;
@@ -91,9 +93,8 @@ function update() {
     obstacle.x = 800 + Math.random() * 200;
     score++;
 
-    // Crește viteza treptat
-    if (obstacle.speed < 16) {
-      obstacle.speed += 0.5;
+    if (obstacle.speed < 14) {
+      obstacle.speed += 0.4; // crește treptat
     }
   }
 
@@ -117,19 +118,18 @@ pcbImg.onload = function() {
     ctx.drawImage(bgImg, bgX, 0, 800, 200);
     ctx.drawImage(bgImg, bgX + 800, 0, 800, 200);
 
-    // PCB player
+    // PCB
     ctx.drawImage(pcbImg, pcb.x, pcb.y, pcb.width, pcb.height);
 
     // Obstacol
     ctx.drawImage(blockImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 
-    // Scor sus dreapta
+    // Scor
     ctx.fillStyle = "#000";
     ctx.font = "22px Arial";
     ctx.textAlign = "right";
     ctx.fillText("Score: " + score, canvas.width - 20, 30);
 
-    // Game Over
     if (gameOver) {
       ctx.fillStyle = "red";
       ctx.font = "40px Arial";
