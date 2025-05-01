@@ -72,7 +72,9 @@ function resetGame() {
 }
 
 function update() {
-  if (gameOver) return;
+  if (gameOver) {
+    obstacle.speed = 4;
+    return;}
 
   // Gravitație
   pcb.y += pcb.velocityY;
