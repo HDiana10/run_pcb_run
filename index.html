@@ -15,7 +15,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const GROUND_Y = 110; // aliniere bună vizual
+const GROUND_Y = 110;
 
 // PCB (player)
 let pcb = {
@@ -24,23 +24,22 @@ let pcb = {
   width: 70,
   height: 70,
   velocityY: 0,
-  gravity: 0.8,   // 🟢 gravitație mai mică => zboară mai mult
+  gravity: 0.8,
   isJumping: false
 };
-
 
 // Obstacle
 let obstacle = {
   x: 800,
-  y: GROUND_Y + 20,  // puțin mai jos decât GROUND_Y vizual
+  y: GROUND_Y + 20,
   width: 50,
-  height: 50,
   height: 50,
   speed: 2
 };
 
 let score = 0;
 let gameOver = false;
+let hasReset = false;
 let bgX = 0;
 
 // Images
@@ -56,7 +55,7 @@ bgImg.src = 'background.png';
 // Săritură
 document.addEventListener('keydown', (e) => {
   if (!pcb.isJumping && !gameOver) {
-    pcb.velocityY = -16; // ajustat pentru greutate mai realistă
+    pcb.velocityY = -16;
     pcb.isJumping = true;
   }
 });
@@ -72,9 +71,7 @@ function resetGame() {
 }
 
 function update() {
-  if (gameOver){
-    resetGame();
-    return;}
+  if (gameOver) return;
 
   // Gravitație
   pcb.y += pcb.velocityY;
@@ -96,7 +93,7 @@ function update() {
     score++;
 
     if (obstacle.speed < 14) {
-      obstacle.speed += 0.4; // crește treptat
+      obstacle.speed += 0.4;
     }
   }
 
@@ -105,10 +102,15 @@ function update() {
     pcb.x < obstacle.x + obstacle.width &&
     pcb.x + pcb.width > obstacle.x &&
     pcb.y < obstacle.y + obstacle.height &&
-    pcb.y + pcb.height > obstacle.y
+    pcb.y + pcb.height > obstacle.y &&
+    !hasReset
   ) {
     gameOver = true;
-    setTimeout(resetGame, 2000);
+    hasReset = true;
+    setTimeout(() => {
+      resetGame();
+      hasReset = false;
+    }, 1500); // Așteaptă 1.5 secunde
   }
 }
 
@@ -132,8 +134,9 @@ pcbImg.onload = function() {
     ctx.textAlign = "right";
     ctx.fillText("Score: " + score, canvas.width - 20, 30);
 
+    // Game Over
     if (gameOver) {
-      ctx.fillStyle = "red";
+      ctx.fillStyle = "#003366"; // Albastru închis
       ctx.font = "40px Arial";
       ctx.textAlign = "center";
       ctx.fillText("Game Over", canvas.width / 2, 100);
